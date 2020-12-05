@@ -6,7 +6,7 @@
         app:showAsAction="never"
         android:gravity="center"
         android:title="@string/update_income"
-        android:visible="false"/>
+        />
 
     <item
         android:id="@+id/addExpense"

@@ -27,13 +27,16 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String euroSymbol= "Eur ";
+
     Toolbar toolbar;
-    LinearLayout mainActivityLinearLayout, appLoaderLinearLayout;
+    LinearLayout mainActivityLinearLayout, appLoaderLinearLayout, surplusDeficitLinearLayout;
     ScrollView expenseScrollView;
-    TextView expenseListIsEmptyTextView, monthIncomeAmount, monthlyIncomeLabel, monthlyExpenseLabel;
+    TextView expenseListIsEmptyTextView, monthIncomeAmount, monthlyIncomeLabel, monthlyExpenseLabel, surplusDeficitTextView;
     ListView expenseListView;
     ProgressBar appLoaderPregressbar;
-    EditText expenseTitleEditText, expenseAmountEditText;
+    EditText expenseTitleEditText, expenseAmountEditText, incomeEditText;
     ExpenseListViewAdapter expenseListViewAdapter;
 
     List<Expense> expenses;
@@ -41,11 +44,9 @@ public class MainActivity extends AppCompatActivity {
     Calendar calendar;
     int year;
     int month;
-    double douIncomeAount;
+    double douIncomeAmount;
 
     String[] calendarMonthsString;
-
-    private int expenseCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         monthlyIncomeLabel = (TextView) findViewById(R.id.monthlyIncomeLabel);
         monthlyExpenseLabel = (TextView) findViewById(R.id.monthlyExpenseLabel);
         expenseListView = (ListView) findViewById(R.id.expenseListView);
+        surplusDeficitLinearLayout = (LinearLayout) findViewById(R.id.surplusDeficitLinearLayout);
+        surplusDeficitTextView = (TextView) findViewById(R.id.surplusDeficitTextView);
         appLoaderPregressbar = (ProgressBar) findViewById(R.id.appLoaderPregressbar);
 
         expenses = new ArrayList<>();
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             month = calendar.get(Calendar.MONTH);
         }
 
-        douIncomeAount = 0.0;
+        douIncomeAmount = 0.0;
 
         loadApplicationState();
     }
@@ -90,7 +93,9 @@ public class MainActivity extends AppCompatActivity {
 
         monthlyIncomeLabel.setText(calendarMonthsString[month] + " " + year + " Income");
         monthlyExpenseLabel.setText(calendarMonthsString[month] + " " + year + " Expense");
-        monthIncomeAmount.setText("Eur " + String.format("%.2f", douIncomeAount));
+        monthIncomeAmount.setText(euroSymbol + String.format("%.2f", douIncomeAmount));
+
+        computeSurplusDeficitIncome();
 
         if (expenses.size() <= 0) {
             expenseListIsEmptyTextView.setVisibility(View.VISIBLE);
@@ -119,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.updateIncome:
+                updateIncome();
+                return true;
+
             case R.id.addExpense:
                 addExpense();
                 return true;
@@ -155,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         expenseListViewAdapter.notifyDataSetChanged();
                     }
+                    computeSurplusDeficitIncome();
                     Toast.makeText(MainActivity.this, "Expense item created..", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -166,5 +176,57 @@ public class MainActivity extends AppCompatActivity {
         });
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void updateIncome() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        View v = LayoutInflater.from(MainActivity.this).inflate(R.layout.income_dialog_view, null);
+        builder.setView(v);
+        incomeEditText = (EditText) v.findViewById(R.id.incomeEditText);
+        builder.setPositiveButton("Update Income", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strIncomeForTheMonth = incomeEditText.getText().toString().trim();
+                if (!TextUtils.isEmpty(strIncomeForTheMonth)) {
+                    douIncomeAmount = Double.parseDouble(strIncomeForTheMonth);
+                    monthIncomeAmount.setText(euroSymbol + String.format("%.2f", douIncomeAmount));
+                    computeSurplusDeficitIncome();
+                    Toast.makeText(MainActivity.this, "Income value has been updated.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Invalid operation, please insert income amount to update income value", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void computeSurplusDeficitIncome() {
+        double surplusDeficit = 0.0;
+        double totalExpenses = 0.0;
+
+        for (int i=0; i<expenses.size(); i++) {
+            totalExpenses += expenses.get(i).getAmount();
+        }
+
+        surplusDeficit = douIncomeAmount - totalExpenses;
+        String surplusDeficitType = surplusDeficit >= 0 ? "Income Surplus:  " : "Income Deficit:  ";
+        surplusDeficitTextView.setText(surplusDeficitType + euroSymbol + String.format("%.2f", Math.abs(surplusDeficit)));
+
+        if (surplusDeficit < 0) {
+            surplusDeficitLinearLayout.setBackgroundColor(getResources().getColor(R.color.deficitBackground));
+            surplusDeficitTextView.setTextColor(getResources().getColor(R.color.deficitText));
+        } else if (surplusDeficit == 0) {
+            surplusDeficitLinearLayout.setBackgroundColor(getResources().getColor(R.color.warningBackground));
+            surplusDeficitTextView.setTextColor(getResources().getColor(R.color.warningText));
+        } else {
+            surplusDeficitLinearLayout.setBackgroundColor(getResources().getColor(R.color.surplusBackground));
+            surplusDeficitTextView.setTextColor(getResources().getColor(R.color.surplusText));
+        }
     }
 }

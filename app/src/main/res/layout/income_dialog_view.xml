@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:gravity="center"
+        android:text="Update Income for the month"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="#CC000000"
+        android:id="@+id/monthlyIncomeLabel"
+        android:layout_alignParentTop="true"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/monthlyIncomeLabel"
+    >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:gravity="left"
+            android:text="Enter Amount"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+        />
+        <EditText
+            android:id="@+id/incomeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            android:paddingLeft="10dp"
+            android:textSize="25sp"
+            android:hint="Amount"
+            android:inputType="numberDecimal"
+            android:gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+        />
+    </LinearLayout>
+</RelativeLayout>
