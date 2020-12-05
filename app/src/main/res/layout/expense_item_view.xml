@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        >
+        <TextView
+            android:id="@+id/expenseTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:text="Yes We Can"
+            android:textSize="22dp"
+            android:textColor="#555555"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/expenseDateTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Yes We Can"
+                android:textSize="15dp"
+                android:textColor="#777777"
+                android:textStyle="normal"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/expenseAmountTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Yes We Can"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:textStyle="normal"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
