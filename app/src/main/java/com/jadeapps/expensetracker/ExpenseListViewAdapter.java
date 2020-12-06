@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -39,6 +40,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
 
     EditText expenseTitleEditText, expenseAmountEditText;
     Spinner yearSelectionSpinner, monthSelectionSpinner, daySelectionSpinner;
+    CheckBox markRegularExpenseCheckbox;
 
     int tempYear;
     int tempMonth;
@@ -108,6 +110,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
         TextView expenseAmountTextView = (TextView) view.findViewById(R.id.expenseAmountTextView);
         ImageButton expenseEditButton = (ImageButton) view.findViewById(R.id.expenseEditButton);
         ImageButton expenseDeleteButton = (ImageButton) view.findViewById(R.id.expenseDeleteButton);
+        final CheckBox regularExpenseCheckbox = (CheckBox) view.findViewById(R.id.regularExpenseCheckbox);
 
         expenseEditButton.setFocusable(false);
         expenseEditButton.setFocusableInTouchMode(false);
@@ -122,6 +125,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
         expenseTitleTextView.setText(expense.getPaymentFor().length() > 40 ? expense.getPaymentFor().substring(0, 40) + "..." : expense.getPaymentFor());
         expenseDateTextView.setText("Expense Date: " + expense.getMadeOn());
         expenseAmountTextView.setText(MainActivity.euroSymbol + String.format("%.2f", expense.getAmount()));
+        regularExpenseCheckbox.setChecked(expense.getRegular() == 1 ? true : false);
 
         expenseEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +167,21 @@ public class ExpenseListViewAdapter extends BaseAdapter {
             }
         });
 
+        regularExpenseCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int viewPos = expenseListview.getPositionForView(v);
+                final Expense expense1 = expenses.get(computeCurrentPosition(viewPos, expenses.size()));
+                expense1.setRegular(regularExpenseCheckbox.isChecked() ? 1 : 0);
+
+                if (attemptUpdateExpense(expense1)) {
+                    Toast.makeText(context, "Faild to update todo item status", Toast.LENGTH_SHORT).show();
+                } else {
+                    loadApplicationState(null);
+                }
+            }
+        });
+
         if (i % 2 == 0) {
             view.setBackgroundColor(Color.LTGRAY);
         } else {
@@ -191,6 +210,10 @@ public class ExpenseListViewAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
+    private boolean attemptUpdateExpense(Expense expense) {
+        return monthlyIncomeExpenseDB.updateExpense(expense);
+    }
+
     private void editExpense(final Expense expense) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View v = LayoutInflater.from(context).inflate(R.layout.edit_expense_dialog_view, null);
@@ -201,6 +224,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
         yearSelectionSpinner = (Spinner) v.findViewById(R.id.yearSelectionSpinner);
         monthSelectionSpinner = (Spinner) v.findViewById(R.id.monthSelectionSpinner);
         daySelectionSpinner = (Spinner) v.findViewById(R.id.daySelectionSpinner);
+        markRegularExpenseCheckbox = (CheckBox) v.findViewById(R.id.markRegularExpenseCheckbox);
 
         String[] strArray = expense.getMadeOn().split("-");
 
@@ -213,6 +237,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
         setupYearSpinnerSelector(tempYear);
         setupMonthSpinnerSelector(tempMonth);
         setupDaySpinnerSelector(tempDay, tempMonth, tempYear);
+        markRegularExpenseCheckbox.setChecked(expense.getRegular() == 1 ? true : false );
 
         monthSelectionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -241,6 +266,7 @@ public class ExpenseListViewAdapter extends BaseAdapter {
                     expense.setMadeOn(dateString);
                     expense.setAmount(Double.parseDouble(strExpenseAmount));
                     expense.setPaymentFor(expenseTitle);
+                    expense.setRegular(markRegularExpenseCheckbox.isChecked() ? 1 : 0);
                     boolean result =  monthlyIncomeExpenseDB.updateExpense(expense);
                     if (result) {
                         Toast.makeText(context, "Expense updated successfully.", Toast.LENGTH_SHORT).show();

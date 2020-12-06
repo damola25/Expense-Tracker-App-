@@ -6,13 +6,16 @@ public class Expense {
     private Integer id, monthIncomeExpenseId;
     private double amount;
     private String paymentFor, madeOn;
+    private int regular;
 
-    public Expense(Integer id, Integer monthIncomeExpenseId, String paymentFor, double amount, String madeOn) {
+    public Expense(Integer id, Integer monthIncomeExpenseId, String paymentFor, double amount, String madeOn, int regular) {
         this.id = id;
         this.monthIncomeExpenseId = monthIncomeExpenseId;
         this.paymentFor = paymentFor;
         this.amount = amount;
         this.madeOn = madeOn;
+        this.regular = regular;
+
     }
 
     public Expense() {
@@ -56,5 +59,13 @@ public class Expense {
 
     public void setMadeOn(String madeOn) {
         this.madeOn = madeOn;
+    }
+
+    public int getRegular() {
+        return regular;
+    }
+
+    public void setRegular(int regular) {
+        this.regular = regular;
     }
 }

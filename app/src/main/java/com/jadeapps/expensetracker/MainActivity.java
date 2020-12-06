@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner yearSelectionSpinner, monthSelectionSpinner, daySelectionSpinner;
     ExpenseListViewAdapter expenseListViewAdapter;
     MonthlyIncomeExpense monthlyIncomeExpense;
+    CheckBox markRegularExpenseCheckbox;
 
     DatabaseHelper monthlyIncomeExpenseDB;
     List<MonthlyIncomeExpense> monthlyIncomeExpenses;
@@ -188,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
         yearSelectionSpinner = (Spinner) v.findViewById(R.id.yearSelectionSpinner);
         monthSelectionSpinner = (Spinner) v.findViewById(R.id.monthSelectionSpinner);
         daySelectionSpinner = (Spinner) v.findViewById(R.id.daySelectionSpinner);
+        markRegularExpenseCheckbox = (CheckBox) v.findViewById(R.id.markRegularExpenseCheckbox);
 
         tempYear = calendar.get(Calendar.YEAR);
         tempMonth = (calendar.get(Calendar.MONTH)+1);
@@ -226,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     expense.setPaymentFor(expenseTitle);
                     expense.setAmount(Double.parseDouble(strExpenseAmount));
                     expense.setMadeOn(dateString);
+                    expense.setRegular(markRegularExpenseCheckbox.isChecked() ? 1 : 0);
                     boolean result =  monthlyIncomeExpenseDB.addExpense(expense);
                     if (result) {
                         initializeSelectedMonthIncomeExpense();

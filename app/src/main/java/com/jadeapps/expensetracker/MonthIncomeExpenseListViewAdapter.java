@@ -174,7 +174,6 @@ public class MonthIncomeExpenseListViewAdapter extends BaseAdapter {
 
         final Spinner yearSelectionSpinner = (Spinner) v.findViewById(R.id.yearSelectionSpinner);
         final Spinner monthSelectionSpinner = (Spinner) v.findViewById(R.id.monthSelectionSpinner);
-        final EditText incomeEditText = (EditText) v.findViewById(R.id.incomeEditText);
 
         List<String> monthSpinnerList = new ArrayList<>();
         List<String> yearSpinnerList = new ArrayList<>();
@@ -208,20 +207,17 @@ public class MonthIncomeExpenseListViewAdapter extends BaseAdapter {
         yearSelectionSpinner.setAdapter(spinnerAdapterYear);
         yearSelectionSpinner.setSelection((yearIndex+1), true);
 
-        incomeEditText.setText(String.valueOf(monthlyIncomeExpense.getIncome()));
 
         builder.setPositiveButton("Update Record", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String strMonth = monthSelectionSpinner.getSelectedItem().toString().trim();
                 String strYear = yearSelectionSpinner.getSelectedItem().toString().trim();
-                String strIncome = incomeEditText.getText().toString().trim();
 
-                if (!strMonth.equals(monthSelectString) && !strYear.equals(yearSelectString) && !strYear.equals(strIncome)) {
+                if (!strMonth.equals(monthSelectString) && !strYear.equals(yearSelectString)) {
                     int intMonth = months.indexOf(strMonth);
                     int intYear = Integer.parseInt(strYear);
-                    double douIncome = Double.parseDouble(strIncome);
-                    monthlyIncomeExpense.setIncome(douIncome);
+                    monthlyIncomeExpense.setIncome(0);
                     monthlyIncomeExpense.setMonth(intMonth);
                     monthlyIncomeExpense.setYear(intYear);
                     if (updateMonthlyIncomeExpense(monthlyIncomeExpense)) {

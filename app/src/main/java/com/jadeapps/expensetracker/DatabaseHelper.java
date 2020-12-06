@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import android.util.Log;
 
 import java.text.ParseException;
@@ -25,6 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_2_COL_3 = "PAYMENT_FOR";
     public static final String TABLE_2_COL_4 = "AMOUNT";
     public static final String TABLE_2_COL_5 = "DATE";
+    public static final String TABLE_2_COL_6 = "REGULAR";
 
     public static final String TABLE_1_COL_1 = "ID";
     public static final String TABLE_1_COL_2 = "MONTH";
@@ -35,11 +37,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
+        context.deleteDatabase("monthly_expense.db");
         db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_1);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_2);
+
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME_1 + " (" +
                 TABLE_1_COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                 TABLE_1_COL_2 + " INTEGER NOT NULL DEFAULT 0, \n" +
@@ -52,7 +58,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 TABLE_2_COL_2 + " INTEGER NOT NULL, \n" +
                 TABLE_2_COL_3 + " VARCHAR(200) NOT NULL, \n" +
                 TABLE_2_COL_4 + " DOUBLE NOT NULL DEFAULT 0, \n" +
-                TABLE_2_COL_5 + " VARCHAR(30) NOT NULL" +
+                TABLE_2_COL_5 + " VARCHAR(30) NOT NULL, \n" +
+                TABLE_2_COL_6 + " INTEGER NOT NULL DEFAULT 0" +
                 ");");
     }
 
@@ -124,11 +131,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(1),
                         cursor.getString(2),
                         cursor.getDouble(3),
-                        cursor.getString(4)
+                        cursor.getString(4),
+                        cursor.getInt(5)
                 ));
             } while (cursor.moveToNext());
         }
-
         return expenses;
     }
 
@@ -148,11 +155,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(1),
                         cursor.getString(2),
                         cursor.getDouble(3),
-                        cursor.getString(4)
+                        cursor.getString(4),
+                        cursor.getInt(5)
                 ));
             } while (cursor.moveToNext());
         }
-
         return expenses;
     }
 
@@ -171,7 +178,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(1),
                         cursor.getString(2),
                         cursor.getDouble(3),
-                        cursor.getString(4)
+                        cursor.getString(4),
+                        cursor.getInt(5)
                 );
             } while (cursor.moveToNext());
         }
@@ -205,6 +213,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         addExpenseContentValues.put(TABLE_2_COL_3, expense.getPaymentFor());
         addExpenseContentValues.put(TABLE_2_COL_4, expense.getAmount());
         addExpenseContentValues.put(TABLE_2_COL_5, expense.getMadeOn());
+        addExpenseContentValues.put(TABLE_2_COL_6, expense.getRegular());
 
         db = getWritableDatabase();
 
@@ -284,6 +293,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         updateExpenseContentValues.put(TABLE_2_COL_3, expense.getPaymentFor());
         updateExpenseContentValues.put(TABLE_2_COL_4, expense.getAmount());
         updateExpenseContentValues.put(TABLE_2_COL_5, expense.getMadeOn());
+        updateExpenseContentValues.put(TABLE_2_COL_6, expense.getRegular());
 
         db = getWritableDatabase();
 
@@ -298,4 +308,3 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 }
-
