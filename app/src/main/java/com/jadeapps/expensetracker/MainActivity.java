@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String[] calendarMonthsString = new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
     Toolbar toolbar;
-    LinearLayout mainActivityLinearLayout, appLoaderLinearLayout, surplusDeficitLinearLayout;
+    LinearLayout mainActivityLinearLayout, appLoaderLinearLayout, surplusDeficitLinearLayout, regularNonRegularExpenseLayout;
     ScrollView expenseScrollView;
     TextView expenseListIsEmptyTextView, monthIncomeAmount, monthlyIncomeLabel, monthlyExpenseLabel, surplusDeficitTextView, nonRegularExpenseTotal, nonRegularExpenseStats, regularExpenseStats, regularExpenseTotal;
     ListView expenseListView;
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mainActivityLinearLayout = (LinearLayout) findViewById(R.id.mainActivityLinearLayout);
+        regularNonRegularExpenseLayout = (LinearLayout) findViewById(R.id.regularNonRegularExpenseLayout);
         appLoaderLinearLayout = (LinearLayout) findViewById(R.id.appLoaderLinearLayout);
         expenseScrollView = (ScrollView) findViewById(R.id.expenseScrollView);
         expenseListIsEmptyTextView = (TextView) findViewById(R.id.expenseListIsEmptyTextView);
@@ -452,17 +453,20 @@ public class MainActivity extends AppCompatActivity {
         return hasRecord;
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void updateListViewComponent() {
+    public void updateListViewComponent() {
         if (expenses.size() <= 0) {
             expenseListIsEmptyTextView.setVisibility(View.VISIBLE);
             expenseListView.setVisibility(View.GONE);
+            regularNonRegularExpenseLayout.setVisibility(View.GONE);
         } else {
             expenses = monthlyIncomeExpenseDB.getExpensesByMonthlyIncomeExpenseId(monthlyIncomeExpense.getId());
             expenseListViewAdapter = new ExpenseListViewAdapter(MainActivity.this, expenses, R.layout.expense_item_view, expenseListView, monthlyIncomeExpenseDB);
             expenseListIsEmptyTextView.setVisibility(View.GONE);
             expenseScrollView.setVisibility(View.VISIBLE);
             expenseListView.setVisibility(View.VISIBLE);
+            regularNonRegularExpenseLayout.setVisibility(View.VISIBLE);
             expenseListView.setAdapter(expenseListViewAdapter);
             expenseListViewAdapter.notifyDataSetChanged();
         }
