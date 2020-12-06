@@ -185,19 +185,47 @@ public class MainActivity extends AppCompatActivity {
 
         expenseTitleEditText = (EditText) v.findViewById(R.id.expenseTitleEditText);
         expenseAmountEditText = (EditText) v.findViewById(R.id.expenseAmountEditText);
+        yearSelectionSpinner = (Spinner) v.findViewById(R.id.yearSelectionSpinner);
+        monthSelectionSpinner = (Spinner) v.findViewById(R.id.monthSelectionSpinner);
+        daySelectionSpinner = (Spinner) v.findViewById(R.id.daySelectionSpinner);
+
+        tempYear = calendar.get(Calendar.YEAR);
+        tempMonth = (calendar.get(Calendar.MONTH)+1);
+        tempDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        setupYearSpinnerSelector(tempYear);
+        setupMonthSpinnerSelector(tempMonth);
+        setupDaySpinnerSelector(tempDay, tempMonth, tempYear);
+
+        monthSelectionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                tempMonth = months.indexOf(monthSelectionSpinner.getSelectedItem().toString().trim());
+                setupDaySpinnerSelector(tempDay, tempMonth, tempYear);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         builder.setPositiveButton("Add Expense", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String expenseTitle = expenseTitleEditText.getText().toString().trim();
                 String strExpenseAmount = expenseAmountEditText.getText().toString().trim();
+                String strYear = yearSelectionSpinner.getSelectedItem().toString().trim();
+                String strMonth = monthSelectionSpinner.getSelectedItem().toString().trim();
+                String strDay = daySelectionSpinner.getSelectedItem().toString().trim();
 
-                if (!TextUtils.isEmpty(expenseTitle) && !TextUtils.isEmpty(strExpenseAmount)) {
+                if (!TextUtils.isEmpty(expenseTitle) && !TextUtils.isEmpty(strExpenseAmount)  && !strYear.equals("Year") && !strMonth.equals("Month") && !strDay.equals("Day")) {
+                    String dateString = strYear + "-" + (months.indexOf(strMonth)+1) + "-" + strDay;
                     Expense expense = new Expense();
                     expense.setMonthIncomeExpenseId(monthlyIncomeExpense.getId());
                     expense.setPaymentFor(expenseTitle);
                     expense.setAmount(Double.parseDouble(strExpenseAmount));
-                    expense.setMadeOn("2020-07-12");
+                    expense.setMadeOn(dateString);
                     boolean result =  monthlyIncomeExpenseDB.addExpense(expense);
                     if (result) {
                         initializeSelectedMonthIncomeExpense();

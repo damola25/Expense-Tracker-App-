@@ -89,6 +89,53 @@
                         android:layout_marginRight="20dp"
                         />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="15dp"
+                        android:gravity="left"
+                        android:text="Date"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Spinner
+                            android:id="@+id/yearSelectionSpinner"
+                            android:layout_width="110dp"
+                            android:layout_height="60dp"
+                            android:textColor="#000000"
+                            android:textSize="25dp"
+                            />
+
+                        <Spinner
+                            android:id="@+id/monthSelectionSpinner"
+                            android:layout_width="145dp"
+                            android:layout_height="60dp"
+                            android:textColor="#000000"
+                            android:paddingLeft="10dp"
+                            android:textSize="25dp"
+                            />
+
+                        <Spinner
+                            android:id="@+id/daySelectionSpinner"
+                            android:layout_width="100dp"
+                            android:layout_height="60dp"
+                            android:textColor="#000000"
+                            android:paddingLeft="10dp"
+                            android:textSize="25dp"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
