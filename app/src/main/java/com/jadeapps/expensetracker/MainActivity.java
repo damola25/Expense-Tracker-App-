@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     LinearLayout mainActivityLinearLayout, appLoaderLinearLayout, surplusDeficitLinearLayout;
     ScrollView expenseScrollView;
-    TextView expenseListIsEmptyTextView, monthIncomeAmount, monthlyIncomeLabel, monthlyExpenseLabel, surplusDeficitTextView;
+    TextView expenseListIsEmptyTextView, monthIncomeAmount, monthlyIncomeLabel, monthlyExpenseLabel, surplusDeficitTextView, nonRegularExpenseTotal, nonRegularExpenseStats, regularExpenseStats, regularExpenseTotal;
     ListView expenseListView;
     ProgressBar appLoaderPregressbar;
     EditText expenseTitleEditText, expenseAmountEditText, incomeEditText;
@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         surplusDeficitLinearLayout = (LinearLayout) findViewById(R.id.surplusDeficitLinearLayout);
         surplusDeficitTextView = (TextView) findViewById(R.id.surplusDeficitTextView);
         appLoaderPregressbar = (ProgressBar) findViewById(R.id.appLoaderPregressbar);
+        nonRegularExpenseTotal  = (TextView) findViewById(R.id.nonRegularExpenseTotal);
+        nonRegularExpenseStats  = (TextView) findViewById(R.id.nonRegularExpenseStats);
+        regularExpenseStats  = (TextView) findViewById(R.id.regularExpenseStats);
+        regularExpenseTotal = (TextView) findViewById(R.id.regularExpenseTotal);
 
         monthlyIncomeExpenses = new ArrayList<>();
         expenses = new ArrayList<>();
@@ -160,6 +164,26 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.app_menu, menu);
 
         return true;
+    }
+
+    public void updateRegularNonRegularStats() {
+        int regularExpensesCount = 0, nonRegularExpensesCount = 0;
+        double regularExpensesTotal = 0.0, nonRegularExpensesTotal = 0.0;
+
+        for (int i=0; i < expenses.size(); i++) {
+            if (expenses.get(i).getRegular() == 1) {
+                regularExpensesCount++;
+                regularExpensesTotal+=expenses.get(i).getAmount();
+            } else {
+                nonRegularExpensesCount++;
+                nonRegularExpensesTotal+=expenses.get(i).getAmount();
+            }
+        }
+
+        nonRegularExpenseTotal.setText(String.format("%.2f", nonRegularExpensesTotal));
+        nonRegularExpenseStats.setText(nonRegularExpensesCount+"");
+        regularExpenseStats.setText(regularExpensesCount+"");
+        regularExpenseTotal.setText(String.format("%.2f", regularExpensesTotal));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -390,6 +414,8 @@ public class MainActivity extends AppCompatActivity {
             surplusDeficitLinearLayout.setBackgroundColor(getResources().getColor(R.color.surplusBackground));
             surplusDeficitTextView.setTextColor(getResources().getColor(R.color.surplusText));
         }
+
+        updateRegularNonRegularStats();
     }
 
 

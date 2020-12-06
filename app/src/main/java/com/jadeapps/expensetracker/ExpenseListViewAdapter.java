@@ -175,10 +175,12 @@ public class ExpenseListViewAdapter extends BaseAdapter {
                 expense1.setRegular(regularExpenseCheckbox.isChecked() ? 1 : 0);
 
                 if (attemptUpdateExpense(expense1)) {
-                    Toast.makeText(context, "Faild to update todo item status", Toast.LENGTH_SHORT).show();
-                } else {
                     loadApplicationState(null);
+                } else {
+                    Toast.makeText(context, "Faild to update todo item status", Toast.LENGTH_SHORT).show();
                 }
+
+                ((MainActivity)context).updateRegularNonRegularStats();
             }
         });
 
