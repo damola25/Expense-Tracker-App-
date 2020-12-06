@@ -3,34 +3,39 @@ package com.jadeapps.expensetracker;
 import java.util.List;
 
 public class MonthlyIncomeExpense {
-    private int month;
-    private int year;
+    private Integer id, month, year;
     private double income;
-    private List<Expense> expenses;
 
-    public MonthlyIncomeExpense(int month, int year, double income, List<Expense> expenses) {
+    public MonthlyIncomeExpense() {}
+
+    public MonthlyIncomeExpense(Integer id, Integer month, Integer year, double income) {
+        this.id = id;
         this.month = month;
         this.year = year;
         this.income = income;
-        this.expenses = expenses;
     }
 
-    public MonthlyIncomeExpense() {
+    public Integer getId() {
+        return id;
     }
 
-    public int getMonth() {
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getMonth() {
         return month;
     }
 
-    public void setMonth(int month) {
+    public void setMonth(Integer month) {
         this.month = month;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
@@ -40,13 +45,5 @@ public class MonthlyIncomeExpense {
 
     public void setIncome(double income) {
         this.income = income;
-    }
-
-    public List<Expense> getExpenses() {
-        return expenses;
-    }
-
-    public void setExpenses(List<Expense> expenses) {
-        this.expenses = expenses;
     }
 }

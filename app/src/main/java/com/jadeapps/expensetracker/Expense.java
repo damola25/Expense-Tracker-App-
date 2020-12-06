@@ -3,25 +3,35 @@ package com.jadeapps.expensetracker;
 import java.util.Date;
 
 public class Expense {
-    private String label;
+    private Integer id, monthIncomeExpenseId;
     private double amount;
-    private Date expenseDate;
+    private String paymentFor, madeOn;
 
-    public Expense(String label, double amount, Date expenseDate) {
-        this.label = label;
+    public Expense(Integer id, Integer monthIncomeExpenseId, String paymentFor, double amount, String madeOn) {
+        this.id = id;
+        this.monthIncomeExpenseId = monthIncomeExpenseId;
+        this.paymentFor = paymentFor;
         this.amount = amount;
-        this.expenseDate = expenseDate;
+        this.madeOn = madeOn;
     }
 
     public Expense() {
     }
 
-    public String getLabel() {
-        return label;
+    public Integer getId() {
+        return id;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getMonthIncomeExpenseId() {
+        return monthIncomeExpenseId;
+    }
+
+    public void setMonthIncomeExpenseId(Integer monthIncomeExpenseId) {
+        this.monthIncomeExpenseId = monthIncomeExpenseId;
     }
 
     public double getAmount() {
@@ -32,11 +42,19 @@ public class Expense {
         this.amount = amount;
     }
 
-    public Date getExpenseDate() {
-        return expenseDate;
+    public String getPaymentFor() {
+        return paymentFor;
     }
 
-    public void setExpenseDate(Date expenseDate) {
-        this.expenseDate = expenseDate;
+    public void setPaymentFor(String paymentFor) {
+        this.paymentFor = paymentFor;
+    }
+
+    public String getMadeOn() {
+        return madeOn;
+    }
+
+    public void setMadeOn(String madeOn) {
+        this.madeOn = madeOn;
     }
 }

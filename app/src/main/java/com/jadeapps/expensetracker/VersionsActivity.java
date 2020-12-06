@@ -32,9 +32,6 @@ import java.util.List;
 import static android.icu.util.Calendar.*;
 
 public class VersionsActivity extends AppCompatActivity {
-
-    public static List<MonthlyIncomeExpense> monthlyIncomeExpenses = new ArrayList<>();
-
     Toolbar toolbar;
     LinearLayout versionsActivityLinearLayout, appLoaderLinearLayout;
     ProgressBar appLoaderPregressbar;
@@ -43,6 +40,10 @@ public class VersionsActivity extends AppCompatActivity {
     ListView monthIncomeExpenseListView;
     ScrollView monthIncomeExpenseScrollView;
     MonthIncomeExpenseListViewAdapter monthIncomeExpenseListViewAdapter;
+
+    List<MonthlyIncomeExpense> monthlyIncomeExpenses;
+
+    DatabaseHelper monthlyIncomeExpenseDB;
 
     Calendar calendar;
     int year;
@@ -60,6 +61,8 @@ public class VersionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_versions);
 
+        monthlyIncomeExpenseDB = new DatabaseHelper(VersionsActivity.this );
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         versionsActivityLinearLayout = (LinearLayout) findViewById(R.id.versionsActivityLinearLayout);
         appLoaderLinearLayout = (LinearLayout) findViewById(R.id.appLoaderLinearLayout);
@@ -68,24 +71,23 @@ public class VersionsActivity extends AppCompatActivity {
         monthIncomeExpenseListView = (ListView) findViewById(R.id.monthIncomeExpenseListView);
         monthIncomeExpenseScrollView = (ScrollView) findViewById(R.id.monthIncomeExpenseScrollView);
 
-
-        calendar = getInstance();
-        year = calendar.get(YEAR);
-        month = calendar.get(MONTH);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            calendar = Calendar.getInstance();
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+        }
 
         intStartYear = 1970;
         intLastYear = getSpinnerLastYear(year);
         years = new ArrayList<>();
-        months = new ArrayList<>();
+        months = Arrays.asList(MainActivity.calendarMonthsString);
+        monthlyIncomeExpenses = new ArrayList<>();
 
         int tempStartYear = intStartYear;
         for (int i=0; i<(intLastYear - intStartYear); i++) {
             tempStartYear++;
             years.add(tempStartYear);
         }
-
-        months = Arrays.asList(MainActivity.calendarMonthsString);
 
         loadApplicationState();
     }
@@ -100,17 +102,14 @@ public class VersionsActivity extends AppCompatActivity {
         toolbar.getOverflowIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         toolbar.setVisibility(View.VISIBLE);
 
-        if (monthlyIncomeExpenses.size() <= 0) {
-            monthIncomeExpenseListIsEmptyTextView.setVisibility(View.VISIBLE);
-            monthIncomeExpenseListView.setVisibility(View.GONE);
-        } else {
-            updateListViewContent();
-        }
+        monthlyIncomeExpenses = monthlyIncomeExpenseDB.allMonthlyIncomeExpense();
+
+        updateListViewContent();
 
         monthIncomeExpenseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final MonthlyIncomeExpense monthlyIncomeExpense = VersionsActivity.monthlyIncomeExpenses.get(i);
+                final MonthlyIncomeExpense monthlyIncomeExpense = monthlyIncomeExpenses.get(i);
 
                 Intent intent = new Intent(VersionsActivity.this, MainActivity.class);
                 intent.putExtra("MONTH_INDEX", monthlyIncomeExpense.getMonth());
@@ -186,20 +185,20 @@ public class VersionsActivity extends AppCompatActivity {
                 String strYear = yearSelectionSpinner.getSelectedItem().toString().trim();
 
                 if (!strMonth.equals(monthSelectString) && !strYear.equals(yearSelectString)) {
-                    if (VersionsActivity.monthlyIncomeExpenses.size() <= 0) {
+                    if (monthlyIncomeExpenses.size() <= 0) {
                         createMonthlyRecord(Integer.parseInt(strYear), months.indexOf(strMonth));
                         if (monthIncomeExpenseListViewAdapter != null) {
                             monthIncomeExpenseListViewAdapter.notifyDataSetChanged();
                         } else {
                             updateListViewContent();
                         }
-                        System.out.println("==============================================>  CRETAED RECORD COUNT: " + VersionsActivity.monthlyIncomeExpenses.size());
+                        System.out.println("==============================================>  CRETAED RECORD COUNT: " + monthlyIncomeExpenses.size());
                     }  else {
                         boolean canCreateRecord = true;
-                        for (int i = 0; i< VersionsActivity.monthlyIncomeExpenses.size(); i++) {
+                        for (int i=0; i<monthlyIncomeExpenses.size(); i++) {
                             if (
-                                    VersionsActivity.monthlyIncomeExpenses.get(i).getYear() == Integer.parseInt(strYear) &&
-                                    VersionsActivity.monthlyIncomeExpenses.get(i).getMonth() == months.indexOf(strMonth)
+                                    monthlyIncomeExpenses.get(i).getYear() == Integer.parseInt(strYear) &&
+                                            monthlyIncomeExpenses.get(i).getMonth() == months.indexOf(strMonth)
                             ) {
                                 canCreateRecord = false;
                             }
@@ -212,10 +211,10 @@ public class VersionsActivity extends AppCompatActivity {
                             } else {
                                 updateListViewContent();
                             }
-                            System.out.println("==============================================>  CRETAED RECORD COUNT: " + VersionsActivity.monthlyIncomeExpenses.size());
+                            System.out.println("==============================================>  CRETAED RECORD COUNT: " + monthlyIncomeExpenses.size());
                         } else {
                             Toast.makeText(VersionsActivity.this, "Record already exist.", Toast.LENGTH_SHORT).show();
-                            System.out.println("==============================================>  ALL RECORD COUNT: " + VersionsActivity.monthlyIncomeExpenses.size());
+                            System.out.println("==============================================>  ALL RECORD COUNT: " + monthlyIncomeExpenses.size());
                         }
                     }
                 } else {
@@ -235,22 +234,33 @@ public class VersionsActivity extends AppCompatActivity {
     }
 
     private void createMonthlyRecord(int yearValue, int monthIndexValue) {
-        List<Expense> newExpenses = new ArrayList<>();
-        MonthlyIncomeExpense monthlyIncomeExpense = new MonthlyIncomeExpense(monthIndexValue, yearValue, 0.0, newExpenses);
-        VersionsActivity.monthlyIncomeExpenses.add(monthlyIncomeExpense);
-        Toast.makeText(VersionsActivity.this, "Record has been created.", Toast.LENGTH_SHORT).show();
+        boolean result = monthlyIncomeExpenseDB.addMonthlyIncomeExpense(monthIndexValue, yearValue);
+        if (result) {
+            monthlyIncomeExpenses = monthlyIncomeExpenseDB.allMonthlyIncomeExpense();
+            updateListViewContent();
+            Toast.makeText(VersionsActivity.this, "Record has been created.", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private int getSpinnerLastYear(int currentYear) {
-        return currentYear;
+        return calendar.get(Calendar.YEAR);
     }
 
     private void updateListViewContent() {
-        monthIncomeExpenseListViewAdapter = new MonthIncomeExpenseListViewAdapter(VersionsActivity.this, VersionsActivity.monthlyIncomeExpenses, R.layout.monthly_income_expense_item_view, monthIncomeExpenseListView);
-        monthIncomeExpenseListIsEmptyTextView.setVisibility(View.GONE);
-        monthIncomeExpenseScrollView.setVisibility(View.VISIBLE);
-        monthIncomeExpenseListView.setVisibility(View.VISIBLE);
-        monthIncomeExpenseListView.setAdapter(monthIncomeExpenseListViewAdapter);
-        monthIncomeExpenseListViewAdapter.notifyDataSetChanged();
+        if (monthlyIncomeExpenses.size() <= 0) {
+            monthIncomeExpenseListIsEmptyTextView.setVisibility(View.VISIBLE);
+            monthIncomeExpenseListView.setVisibility(View.GONE);
+        } else {
+            monthIncomeExpenseListViewAdapter = new MonthIncomeExpenseListViewAdapter(VersionsActivity.this, monthlyIncomeExpenses, R.layout.monthly_income_expense_item_view, monthIncomeExpenseListView, monthlyIncomeExpenseDB);
+            monthIncomeExpenseListIsEmptyTextView.setVisibility(View.GONE);
+            monthIncomeExpenseScrollView.setVisibility(View.VISIBLE);
+            monthIncomeExpenseListView.setVisibility(View.VISIBLE);
+            monthIncomeExpenseListView.setAdapter(monthIncomeExpenseListViewAdapter);
+            monthIncomeExpenseListViewAdapter.notifyDataSetChanged();
+        }
+        versionsActivityLinearLayout.setVisibility(View.VISIBLE);
+        appLoaderLinearLayout.setVisibility(View.GONE);
+        appLoaderPregressbar.setVisibility(View.GONE);
     }
 }

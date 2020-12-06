@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,30 +10,90 @@
         android:orientation="vertical"
         android:paddingBottom="20dp"
         >
-        <TextView
-            android:id="@+id/expenseTitleTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:text="Yes We Can"
-            android:textSize="22dp"
-            android:textColor="#555555"
-            android:textStyle="bold"/>
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/expenseTitleTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="15dp"
+                    android:paddingRight="15dp"
+                    android:text="November(2020)"
+                    android:textSize="20dp"
+                    android:textColor="#000000"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/expenseDateTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="15dp"
+                    android:text="Date: 2020-12-6"
+                    android:textSize="14dp"
+                    android:textColor="#66000000"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:outlineAmbientShadowColor="@android:color/darker_gray"
+                    android:background="#BB33FF33"
+                    tools:targetApi="p"
+                    >
+                    <ImageButton
+                        android:id="@+id/expenseEditButton"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/ic_edit"
+                        />
+                </FrameLayout>
 
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:paddingTop="10dp"
+                    android:outlineAmbientShadowColor="@android:color/darker_gray"
+                    android:background="#BBFF3333"
+                    tools:targetApi="p"
+                    >
+                    <ImageButton
+                        android:id="@+id/expenseDeleteButton"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/ic_delete"
+                        />
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
             <TextView
-                android:id="@+id/expenseDateTextView"
+                android:id="@+id/expenseDateTextView1"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="Yes We Can"
+                android:text=""
                 android:textSize="15dp"
                 android:textColor="#777777"
                 android:textStyle="normal"
